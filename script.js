@@ -40,7 +40,7 @@ fetch('placas.json')
         resultMessage.textContent = "Placa no encontrada. Sugerencias:";
         resultMessage.style.color = "orange";
 
-        // Sugerir posibles estados basados en los primeros caracteres
+        // Sugerir posibles estados basados en la placa
         const sugerencias = sugerirEstados(placaInput, placas);
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
@@ -56,17 +56,20 @@ fetch('placas.json')
 
     // Función para sugerir estados según la placa
     function sugerirEstados(placaInput, placas) {
-      // Tomamos los primeros 3 caracteres de la placa como referencia
-      const prefijo = placaInput.substring(0, 3);
+      // Utilizamos las letras y los números de la placa para comparar
+      const caracteresPlaca = placaInput.substring(0, 3); // Tomamos los primeros 3 caracteres de la placa para comparación
+      
+      // Buscar las placas que tengan las mismas primeras 3 letras o números
+      const coincidencias = placas.filter(placa => placa.Placa.substring(0, 3) === caracteresPlaca);
+      
+      // Obtener los estados únicos de las placas encontradas
+      const estadosPosibles = coincidencias.map(placa => placa.Estado);
 
-      // Filtrar placas por prefijo similar
-      const posiblesEstados = placas.filter(placa => placa.Placa.substring(0, 3) === prefijo);
+      // Eliminar duplicados
+      const estadosUnicos = [...new Set(estadosPosibles)];
 
-      // Extraer los estados únicos
-      const estados = [...new Set(posiblesEstados.map(placa => placa.Estado))];
-
-      // Limitar a 2 sugerencias
-      return estados.slice(0, 2);
+      // Devolver un máximo de dos sugerencias
+      return estadosUnicos.slice(0, 2);
     }
 
     // Evento de búsqueda cuando el usuario presiona el botón
