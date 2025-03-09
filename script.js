@@ -7,7 +7,7 @@ fetch('placas.json')
       const placaInput = document.getElementById('placa-input').value.trim().toUpperCase();
       const resultMessage = document.getElementById('result-message');
       const detailsContainer = document.getElementById('details');
-
+      
       if (placaInput === "") {
         resultMessage.textContent = "Por favor ingresa una placa.";
         resultMessage.style.color = "red";
@@ -18,7 +18,7 @@ fetch('placas.json')
       const placaEncontrada = placas.find(p => p.Placa === placaInput);
 
       if (placaEncontrada) {
-        // Mostrar los resultados
+        // Si la placa está en la base de datos, mostrar los resultados
         resultMessage.textContent = `La placa ${placaInput} pertenece a: ${placaEncontrada.Estado}`;
         resultMessage.style.color = "green";
 
@@ -36,10 +36,37 @@ fetch('placas.json')
           <strong>P7:</strong> ${placaEncontrada.P7} <br>
         `;
       } else {
-        resultMessage.textContent = "Placa no encontrada en la base de datos.";
-        resultMessage.style.color = "red";
-        detailsContainer.innerHTML = ""; // Limpiar los detalles si no se encuentra la placa
+        // Si la placa no está en la base de datos, sugerir posibles estados
+        resultMessage.textContent = "Placa no encontrada. Sugerencias:";
+        resultMessage.style.color = "orange";
+
+        // Sugerir posibles estados basados en los primeros caracteres
+        const sugerencias = sugerirEstados(placaInput, placas);
+        if (sugerencias.length > 0) {
+          detailsContainer.innerHTML = `
+            <strong>Posibles estados:</strong><br>
+            1. ${sugerencias[0]}<br>
+            2. ${sugerencias[1] ? sugerencias[1] : 'No hay más sugerencias.'}
+          `;
+        } else {
+          detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
+        }
       }
+    }
+
+    // Función para sugerir estados según la placa
+    function sugerirEstados(placaInput, placas) {
+      // Tomamos los primeros 3 caracteres de la placa como referencia
+      const prefijo = placaInput.substring(0, 3);
+
+      // Filtrar placas por prefijo similar
+      const posiblesEstados = placas.filter(placa => placa.Placa.substring(0, 3) === prefijo);
+
+      // Extraer los estados únicos
+      const estados = [...new Set(posiblesEstados.map(placa => placa.Estado))];
+
+      // Limitar a 2 sugerencias
+      return estados.slice(0, 2);
     }
 
     // Evento de búsqueda cuando el usuario presiona el botón
