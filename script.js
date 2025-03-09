@@ -41,13 +41,14 @@ fetch('placas.json')
         resultMessage.textContent = "Sugerencias de posibles estados:";
         resultMessage.style.color = "orange";
 
-        // Sugerir posibles estados basados en las primeras letras
+        // Sugerir posibles estados basados en las primeras 4 letras
         const sugerencias = sugerirEstados(placaInput, placas);
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
             <strong>Posibles estados:</strong><br>
             1. <span style="color: ${sugerencias[0].color};">${sugerencias[0].estado}</span><br>
-            2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado}</span>
+            2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado}</span><br>
+            3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado}</span>
           `;
         } else {
           detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
@@ -55,13 +56,13 @@ fetch('placas.json')
       }
     }
 
-    // Función para sugerir estados según la placa
+    // Función para sugerir estados según los primeros 4 caracteres de la placa
     function sugerirEstados(placaInput, placas) {
-      // Tomamos los primeros 3 caracteres de la placa como referencia para buscar coincidencias
-      const prefijo = placaInput.substring(0, 3);
+      // Tomamos los primeros 4 caracteres de la placa como referencia para buscar coincidencias
+      const prefijo = placaInput.substring(0, 4);
 
-      // Filtramos las placas que comienzan con los mismos primeros 3 caracteres
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 3) === prefijo);
+      // Filtramos las placas que comienzan con los mismos primeros 4 caracteres
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4) === prefijo);
 
       // Contar las ocurrencias de los estados en las coincidencias
       const estadosCount = coincidencias.reduce((acc, placa) => {
@@ -78,13 +79,13 @@ fetch('placas.json')
       // Ordenar los estados por el número de coincidencias (de mayor a menor)
       estados.sort((a, b) => b.count - a.count);
 
-      // Limitar las sugerencias a los dos estados más comunes
-      const sugerencias = estados.slice(0, 2);
+      // Limitar las sugerencias a los tres estados más comunes
+      const sugerencias = estados.slice(0, 3);
 
-      // Si hay sugerencias, destacamos el estado más común en verde y el segundo en naranja
+      // Si hay sugerencias, destacamos el estado más común en verde, el segundo en naranja y el tercero en amarillo
       return sugerencias.map((sug, index) => ({
         estado: sug.estado,
-        color: index === 0 ? "green" : "orange"  // El primer estado será verde (correcto)
+        color: index === 0 ? "green" : index === 1 ? "orange" : "yellow"
       }));
     }
 
