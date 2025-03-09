@@ -4,7 +4,7 @@ fetch('placas.json')
   .then(placas => {
     // Función de búsqueda
     function buscarPlaca() {
-      const placaInput = document.getElementById('placa-input').value.trim().toUpperCase();
+      const placaInput = document.getElementById('placa-input').value.trim().toUpperCase(); // Convertir a mayúsculas
       const resultMessage = document.getElementById('result-message');
       const detailsContainer = document.getElementById('details');
       
@@ -40,7 +40,7 @@ fetch('placas.json')
         resultMessage.textContent = "Placa no encontrada. Sugerencias:";
         resultMessage.style.color = "orange";
 
-        // Sugerir posibles estados basados en la placa
+        // Sugerir posibles estados basados en las primeras letras
         const sugerencias = sugerirEstados(placaInput, placas);
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
@@ -56,20 +56,17 @@ fetch('placas.json')
 
     // Función para sugerir estados según la placa
     function sugerirEstados(placaInput, placas) {
-      // Utilizamos las letras y los números de la placa para comparar
-      const caracteresPlaca = placaInput.substring(0, 3); // Tomamos los primeros 3 caracteres de la placa para comparación
-      
-      // Buscar las placas que tengan las mismas primeras 3 letras o números
-      const coincidencias = placas.filter(placa => placa.Placa.substring(0, 3) === caracteresPlaca);
-      
-      // Obtener los estados únicos de las placas encontradas
-      const estadosPosibles = coincidencias.map(placa => placa.Estado);
+      // Tomamos los primeros 3 caracteres de la placa como referencia para buscar coincidencias
+      const prefijo = placaInput.substring(0, 3);
 
-      // Eliminar duplicados
-      const estadosUnicos = [...new Set(estadosPosibles)];
+      // Filtramos las placas que comienzan con los mismos primeros 3 caracteres
+      const coincidencias = placas.filter(placa => placa.Placa.substring(0, 3) === prefijo);
 
-      // Devolver un máximo de dos sugerencias
-      return estadosUnicos.slice(0, 2);
+      // Extraemos los estados únicos
+      const estados = [...new Set(coincidencias.map(placa => placa.Estado))];
+
+      // Limitar las sugerencias a máximo dos estados
+      return estados.slice(0, 2);
     }
 
     // Evento de búsqueda cuando el usuario presiona el botón
