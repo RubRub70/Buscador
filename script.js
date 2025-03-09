@@ -7,7 +7,7 @@ fetch('placas.json')
       const placaInput = document.getElementById('placa-input').value.trim().toUpperCase(); // Convertir a mayúsculas
       const resultMessage = document.getElementById('result-message');
       const detailsContainer = document.getElementById('details');
-      
+
       if (placaInput === "") {
         resultMessage.textContent = "Por favor ingresa una placa.";
         resultMessage.style.color = "red";
@@ -69,14 +69,8 @@ fetch('placas.json')
       return estados.slice(0, 2);
     }
 
-    // Evento de búsqueda cuando el usuario presiona el botón
-    document.getElementById('search-btn').addEventListener('click', buscarPlaca);
+    // Evento de búsqueda cuando el usuario escribe en el campo de entrada
+    document.getElementById('placa-input').addEventListener('input', buscarPlaca);
 
-    // Permitir búsqueda también con la tecla Enter
-    document.getElementById('placa-input').addEventListener('keypress', function(event) {
-      if (event.key === 'Enter') {
-        buscarPlaca();
-      }
-    });
   })
   .catch(error => console.error('Error al cargar el archivo JSON:', error));
