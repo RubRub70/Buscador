@@ -60,7 +60,10 @@ fetch('placas.json')
       const prefijo = placaInput.substring(0, 3);
 
       // Filtramos las placas que comienzan con los mismos primeros 3 caracteres
-      const coincidencias = placas.filter(placa => placa.Placa.substring(0, 3) === prefijo);
+      const coincidencias = placas.filter(placa => {
+        // Aseguramos que la placa tenga un valor válido y no sea nula
+        return placa.Placa && placa.Placa.substring(0, 3) === prefijo;
+      });
 
       // Extraemos los estados únicos
       const estados = [...new Set(coincidencias.map(placa => placa.Estado))];
@@ -71,5 +74,8 @@ fetch('placas.json')
 
     // Evento de búsqueda cuando el usuario presiona el botón
     document.getElementById('search-btn').addEventListener('click', buscarPlaca);
+
+    // Búsqueda en tiempo real mientras se escribe (sin presionar el botón)
+    document.getElementById('placa-input').addEventListener('input', buscarPlaca);
   })
   .catch(error => console.error('Error al cargar el archivo JSON:', error));
