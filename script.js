@@ -65,7 +65,7 @@ fetch('placas.json')
         return placa.Placa && placa.Placa.substring(0, 3) === prefijo;
       });
 
-      // Extraemos los estados únicos
+      // Extraemos los estados únicos asociados a esas placas
       const estados = [...new Set(coincidencias.map(placa => placa.Estado))];
 
       // Limitar las sugerencias a máximo dos estados
