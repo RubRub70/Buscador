@@ -20,14 +20,13 @@ fetch('placas.json')
 
       if (placaEncontrada) {
         // Si la placa está en la base de datos, mostrar el estado correspondiente
-        resultMessage.textContent = `La placa ${placaInput} pertenece al estado ${placaEncontrada.Estado}.`;
+        resultMessage.textContent = `La placa ${placaInput} pertenece al estado ${placaEncontrada['N. LETRAS']}.`;
         resultMessage.style.color = "green";
 
         // Mostrar detalles adicionales de la placa
         detailsContainer.innerHTML = `
           <strong>Detalles:</strong><br>
-          <strong>Estado:</strong> ${placaEncontrada.Estado} <br>
-          <strong>N. LETRAS:</strong> ${placaEncontrada["N. LETRAS"]} <br>
+          <strong>Estado:</strong> ${placaEncontrada['N. LETRAS']} <br>
           <strong>P1:</strong> ${placaEncontrada.P1} <br>
           <strong>P2:</strong> ${placaEncontrada.P2} <br>
           <strong>P3:</strong> ${placaEncontrada.P3} <br>
@@ -66,7 +65,7 @@ fetch('placas.json')
 
       // Contar las ocurrencias de los estados en las coincidencias
       const estadosCount = coincidencias.reduce((acc, placa) => {
-        acc[placa.Estado] = (acc[placa.Estado] || 0) + 1;
+        acc[placa['N. LETRAS']] = (acc[placa['N. LETRAS']] || 0) + 1;
         return acc;
       }, {});
 
