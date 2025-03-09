@@ -48,13 +48,13 @@ fetch('placas.json')
       }
     }
 
-    // Función para sugerir estados según los primeros 4 caracteres de la placa
+    // Función para sugerir estados según los primeros 7 caracteres de la placa
     function sugerirEstados(placaInput, placas) {
-      // Tomamos los primeros 4 caracteres de la placa como referencia para buscar coincidencias
-      const prefijo = placaInput.substring(0, 4);
+      // Tomamos los primeros 7 caracteres de la placa como referencia para buscar coincidencias
+      const prefijo = placaInput.substring(0, 7);
 
-      // Filtramos las placas que comienzan con los mismos primeros 4 caracteres
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4) === prefijo);
+      // Filtramos las placas que comienzan con los mismos primeros 7 caracteres
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 7) === prefijo);
 
       // Si no hay coincidencias exactas, hacemos una búsqueda general para todos los estados
       if (coincidencias.length === 0) {
