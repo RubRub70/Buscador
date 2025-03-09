@@ -11,6 +11,7 @@ fetch('placas.json')
       if (placaInput === "") {
         resultMessage.textContent = "Por favor ingresa una placa.";
         resultMessage.style.color = "red";
+        detailsContainer.innerHTML = ""; // Limpiar los detalles si el campo está vacío
         return;
       }
 
