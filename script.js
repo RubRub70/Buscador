@@ -23,25 +23,18 @@ fetch('placas.json')
         resultMessage.textContent = `La placa ${placaInput} pertenece al estado ${placaEncontrada['N. LETRAS']}.`;
         resultMessage.style.color = "green";
 
-        // Mostrar detalles adicionales de la placa
+        // Mostrar solo el estado, eliminando las claves P1, P2, etc.
         detailsContainer.innerHTML = `
-          <strong>Detalles:</strong><br>
           <strong>Estado:</strong> ${placaEncontrada['N. LETRAS']} <br>
-          <strong>P1:</strong> ${placaEncontrada.P1} <br>
-          <strong>P2:</strong> ${placaEncontrada.P2} <br>
-          <strong>P3:</strong> ${placaEncontrada.P3} <br>
-          <strong>P4:</strong> ${placaEncontrada.P4} <br>
-          <strong>P5:</strong> ${placaEncontrada.P5} <br>
-          <strong>P6:</strong> ${placaEncontrada.P6} <br>
-          <strong>P7:</strong> ${placaEncontrada.P7} <br>
         `;
       } else {
         // Si la placa no está en la base de datos, sugerir posibles estados
         resultMessage.textContent = "Sugerencias de posibles estados:";
         resultMessage.style.color = "orange";
 
-        // Sugerir posibles estados basados en las primeras 4 letras
+        // Forzar la búsqueda de sugerencias, incluso si no se encuentra una placa exacta
         const sugerencias = sugerirEstados(placaInput, placas);
+
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
             <strong>Posibles estados:</strong><br>
@@ -63,9 +56,22 @@ fetch('placas.json')
       // Filtramos las placas que comienzan con los mismos primeros 4 caracteres
       const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4) === prefijo);
 
-      // Si no hay coincidencias, devolvemos un array vacío
+      // Si no hay coincidencias exactas, hacemos una búsqueda general para todos los estados
       if (coincidencias.length === 0) {
-        return [];
+        // Si no hay coincidencias, sugerimos tres estados al azar basados en la base de datos
+        const estadosUnicos = [...new Set(placas.map(placa => placa['N. LETRAS']))];
+        
+        // Seleccionamos tres estados aleatorios
+        const sugerenciasAleatorias = [];
+        while (sugerenciasAleatorias.length < 3 && estadosUnicos.length > 0) {
+          const index = Math.floor(Math.random() * estadosUnicos.length);
+          sugerenciasAleatorias.push(estadosUnicos.splice(index, 1)[0]);
+        }
+
+        return sugerenciasAleatorias.map((estado, index) => ({
+          estado,
+          color: index === 0 ? "green" : index === 1 ? "orange" : "yellow"
+        }));
       }
 
       // Contar las ocurrencias de los estados en las coincidencias
