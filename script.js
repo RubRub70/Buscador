@@ -63,6 +63,11 @@ fetch('placas.json')
       // Filtramos las placas que comienzan con los mismos primeros 4 caracteres
       const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4) === prefijo);
 
+      // Si no hay coincidencias, devolvemos un array vacío
+      if (coincidencias.length === 0) {
+        return [];
+      }
+
       // Contar las ocurrencias de los estados en las coincidencias
       const estadosCount = coincidencias.reduce((acc, placa) => {
         acc[placa['N. LETRAS']] = (acc[placa['N. LETRAS']] || 0) + 1;
