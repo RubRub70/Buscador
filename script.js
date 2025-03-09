@@ -45,8 +45,8 @@ fetch('placas.json')
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
             <strong>Posibles estados:</strong><br>
-            1. ${sugerencias[0]}<br>
-            2. ${sugerencias[1] ? sugerencias[1] : 'No hay más sugerencias.'}
+            1. <span style="color: ${sugerencias[0].color};">${sugerencias[0].estado}</span><br>
+            2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado}</span>
           `;
         } else {
           detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
@@ -60,16 +60,31 @@ fetch('placas.json')
       const prefijo = placaInput.substring(0, 3);
 
       // Filtramos las placas que comienzan con los mismos primeros 3 caracteres
-      const coincidencias = placas.filter(placa => {
-        // Aseguramos que la placa tenga un valor válido y no sea nula
-        return placa.Placa && placa.Placa.substring(0, 3) === prefijo;
-      });
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 3) === prefijo);
 
-      // Extraemos los estados únicos asociados a esas placas
-      const estados = [...new Set(coincidencias.map(placa => placa.Estado))];
+      // Contar las ocurrencias de los estados en las coincidencias
+      const estadosCount = coincidencias.reduce((acc, placa) => {
+        acc[placa.Estado] = (acc[placa.Estado] || 0) + 1;
+        return acc;
+      }, {});
 
-      // Limitar las sugerencias a máximo dos estados
-      return estados.slice(0, 2);
+      // Convertir el objeto de conteo en un array de objetos con el estado y el número de coincidencias
+      const estados = Object.keys(estadosCount).map(estado => ({
+        estado,
+        count: estadosCount[estado]
+      }));
+
+      // Ordenar los estados por el número de coincidencias (de mayor a menor)
+      estados.sort((a, b) => b.count - a.count);
+
+      // Limitar las sugerencias a los dos estados más comunes
+      const sugerencias = estados.slice(0, 2);
+
+      // Si hay sugerencias, destacamos el estado más común en verde y el segundo en naranja
+      return sugerencias.map((sug, index) => ({
+        estado: sug.estado,
+        color: index === 0 ? "green" : "orange"  // El primer estado será verde (correcto)
+      }));
     }
 
     // Evento de búsqueda cuando el usuario presiona el botón
