@@ -15,15 +15,15 @@ fetch('placas.json')
         return;
       }
 
-      // Buscar la placa en el JSON
+      // Buscar la placa en el JSON (verificando si existe una placa exacta)
       const placaEncontrada = placas.find(p => p.Placa === placaInput);
 
       if (placaEncontrada) {
-        // Si la placa está en la base de datos, mostrar los resultados
-        resultMessage.textContent = `La placa ${placaInput} pertenece a: ${placaEncontrada.Estado}`;
+        // Si la placa está en la base de datos, mostrar el estado correspondiente
+        resultMessage.textContent = `La placa ${placaInput} pertenece al estado ${placaEncontrada.Estado}.`;
         resultMessage.style.color = "green";
 
-        // Mostrar detalles adicionales
+        // Mostrar detalles adicionales de la placa
         detailsContainer.innerHTML = `
           <strong>Detalles:</strong><br>
           <strong>Estado:</strong> ${placaEncontrada.Estado} <br>
