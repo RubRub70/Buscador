@@ -37,7 +37,7 @@ fetch('placas.json')
         `;
       } else {
         // Si la placa no está en la base de datos, sugerir posibles estados
-        resultMessage.textContent = "Placa no encontrada. Sugerencias:";
+        resultMessage.textContent = "Sugerencias de posibles estados:";
         resultMessage.style.color = "orange";
 
         // Sugerir posibles estados basados en las primeras letras
