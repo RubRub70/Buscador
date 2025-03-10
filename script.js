@@ -8,6 +8,14 @@ fetch('placas.json')
       const resultMessage = document.getElementById('result-message');
       const detailsContainer = document.getElementById('details');
 
+      // Limitar a 8 caracteres
+      if (placaInput.length > 8) {
+        resultMessage.textContent = "La placa no puede tener más de 8 caracteres.";
+        resultMessage.style.color = "red";
+        detailsContainer.innerHTML = "";
+        return;
+      }
+
       if (placaInput === "") {
         resultMessage.textContent = "Por favor ingresa una placa.";
         resultMessage.style.color = "red";
