@@ -51,9 +51,7 @@ fetch('placas.json')
             2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado} (${sugerencias[1].label})</span><br>
             Ejemplo: <strong>${sugerencias[1].ejemplo}</strong><br>
             3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado} (${sugerencias[2].label})</span><br>
-            Ejemplo: <strong>${sugerencias[2].ejemplo}</strong><br>
-            4. <span style="color: ${sugerencias[3].color};">${sugerencias[3].estado} (${sugerencias[3].label})</span><br>
-            Ejemplo: <strong>${sugerencias[3].ejemplo}</strong>
+            Ejemplo: <strong>${sugerencias[2].ejemplo}</strong>
           `;
         } else {
           detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
@@ -65,53 +63,70 @@ fetch('placas.json')
     function sugerirEstados(placaInput, placas) {
       const prefijo = placaInput.substring(0, 4); // Solo tomamos los primeros 4 caracteres de la placa
 
-      // Filtramos las placas que contienen los primeros 4 caracteres de la placa ingresada
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4).includes(prefijo));
+      // Calculamos la distancia de Levenshtein para todas las placas en la base de datos
+      const coincidencias = placas.map(placa => {
+        const distance = calcularLevenshtein(placa.Placa.substring(0, 4), prefijo); // Calculamos la distancia entre el prefijo de la placa y el input
+        return { placa, distance }; // Retornamos la placa con su distancia
+      });
 
-      if (coincidencias.length === 0) {
-        // Si no hay coincidencias, sugerimos cuatro estados más comunes basados en las primeras letras
+      // Filtramos las placas que tienen una distancia de Levenshtein razonable (menor a un umbral)
+      const umbral = 3; // Si la distancia es menor a 3, consideramos que es una coincidencia aceptable
+      const coincidenciasFiltradas = coincidencias.filter(coincidencia => coincidencia.distance <= umbral);
+
+      if (coincidenciasFiltradas.length === 0) {
+        // Si no hay coincidencias, sugerimos tres estados aleatorios
         const estadosUnicos = [...new Set(placas.map(placa => placa['N. LETRAS']))];
 
-        // Seleccionamos cuatro estados aleatorios
+        // Seleccionamos tres estados aleatorios
         const sugerenciasAleatorias = [];
-        while (sugerenciasAleatorias.length < 4 && estadosUnicos.length > 0) {
+        while (sugerenciasAleatorias.length < 3 && estadosUnicos.length > 0) {
           const index = Math.floor(Math.random() * estadosUnicos.length);
           sugerenciasAleatorias.push(estadosUnicos.splice(index, 1)[0]);
         }
 
         return sugerenciasAleatorias.map((estado, index) => ({
           estado,
-          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray",
+          color: index === 0 ? "green" : index === 1 ? "orange" : "gray",
           label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada",
           ejemplo: "Ejemplo de placa: " + placas.find(p => p['N. LETRAS'] === estado).Placa
         }));
       }
 
-      // Si encontramos coincidencias, calculamos la frecuencia de los estados
-      const estadosCount = coincidencias.reduce((acc, placa) => {
-        acc[placa['N. LETRAS']] = (acc[placa['N. LETRAS']] || 0) + 1;
-        return acc;
-      }, {});
+      // Ordenamos las coincidencias por la distancia de Levenshtein (de menor a mayor)
+      coincidenciasFiltradas.sort((a, b) => a.distance - b.distance);
 
-      // Convertimos el objeto de conteo en un array
-      const estados = Object.keys(estadosCount).map(estado => ({
-        estado,
-        count: estadosCount[estado]
-      }));
-
-      // Ordenamos por el número de coincidencias y retornamos las cuatro sugerencias más relevantes
-      estados.sort((a, b) => b.count - a.count);
-
-      // Limitar a las 4 sugerencias principales
-      const sugerencias = estados.slice(0, 4);
+      // Limitar a las 3 mejores sugerencias
+      const sugerencias = coincidenciasFiltradas.slice(0, 3);
 
       // Asignamos colores, etiquetas y ejemplos a las sugerencias
       return sugerencias.map((sug, index) => ({
-        estado: sug.estado,
+        estado: sug.placa['N. LETRAS'],
         color: index === 0 ? "green" : index === 1 ? "orange" : "red",
         label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada",
-        ejemplo: "Ejemplo de placa: " + placas.find(p => p['N. LETRAS'] === sug.estado).Placa
+        ejemplo: "Ejemplo de placa: " + sug.placa.Placa
       }));
+    }
+
+    // Función para calcular la distancia de Levenshtein
+    function calcularLevenshtein(a, b) {
+      const tmp = [];
+      let i, j;
+      for (i = 0; i <= a.length; i++) {
+        tmp[i] = [i];
+      }
+      for (j = 0; j <= b.length; j++) {
+        tmp[0][j] = j;
+      }
+      for (i = 1; i <= a.length; i++) {
+        for (j = 1; j <= b.length; j++) {
+          tmp[i][j] = Math.min(
+            tmp[i - 1][j] + 1, // Deletions
+            tmp[i][j - 1] + 1, // Insertions
+            tmp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1) // Substitutions
+          );
+        }
+      }
+      return tmp[a.length][b.length];
     }
 
     // Evento de búsqueda cuando el usuario presiona el botón
