@@ -51,7 +51,7 @@ fetch('placas.json')
     // Función para sugerir estados según los primeros 7 caracteres de la placa
     function sugerirEstados(placaInput, placas) {
       // Tomamos los primeros 7 caracteres de la placa como referencia para buscar coincidencias
-      const prefijo = placaInput.substring(0, 7);
+      const prefijo = placaInput.substring(0, 7); // Lee los primeros 7 caracteres
 
       // Filtramos las placas que comienzan con los mismos primeros 7 caracteres
       const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 7) === prefijo);
