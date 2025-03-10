@@ -77,8 +77,8 @@ fetch('placas.json')
 
         return sugerenciasAleatorias.map((estado, index) => ({
           estado,
-          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "red",
-          label: index === 0 ? "Mayor coincidencia" : index === 1 ? "Coincidencia Promedio" : "Puedes intentarlo, pero no te aseguro nada"
+          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray",
+          label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada"
         }));
       }
 
