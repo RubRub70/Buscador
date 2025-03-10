@@ -48,7 +48,8 @@ fetch('placas.json')
             <strong>Posibles estados:</strong><br>
             1. <span style="color: ${sugerencias[0].color};">${sugerencias[0].estado}</span><br>
             2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado}</span><br>
-            3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado}</span>
+            3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado}</span><br>
+            4. <span style="color: ${sugerencias[3].color};">${sugerencias[3].estado}</span>
           `;
         } else {
           detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
@@ -56,27 +57,27 @@ fetch('placas.json')
       }
     }
 
-    // Función para sugerir estados según los primeros 3 caracteres de la placa
+    // Función para sugerir estados según los primeros 4 caracteres de la placa
     function sugerirEstados(placaInput, placas) {
-      const prefijo = placaInput.substring(0, 3); // Tomamos los primeros 3 caracteres de la placa como referencia para las sugerencias
+      const prefijo = placaInput.substring(0, 4); // Solo tomamos los primeros 4 caracteres de la placa
 
-      // Filtramos las placas que contienen los primeros caracteres de la placa ingresada (no exactos, pero similares)
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 3).includes(prefijo));
+      // Filtramos las placas que contienen los primeros 4 caracteres de la placa ingresada
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4).includes(prefijo));
 
       if (coincidencias.length === 0) {
-        // Si no hay coincidencias, sugerimos tres estados más comunes basados en las primeras letras
+        // Si no hay coincidencias, sugerimos cuatro estados más comunes basados en las primeras letras
         const estadosUnicos = [...new Set(placas.map(placa => placa['N. LETRAS']))];
 
-        // Seleccionamos tres estados aleatorios
+        // Seleccionamos cuatro estados aleatorios
         const sugerenciasAleatorias = [];
-        while (sugerenciasAleatorias.length < 3 && estadosUnicos.length > 0) {
+        while (sugerenciasAleatorias.length < 4 && estadosUnicos.length > 0) {
           const index = Math.floor(Math.random() * estadosUnicos.length);
           sugerenciasAleatorias.push(estadosUnicos.splice(index, 1)[0]);
         }
 
         return sugerenciasAleatorias.map((estado, index) => ({
           estado,
-          color: index === 0 ? "green" : index === 1 ? "orange" : "yellow"
+          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray"
         }));
       }
 
@@ -92,16 +93,16 @@ fetch('placas.json')
         count: estadosCount[estado]
       }));
 
-      // Ordenamos por el número de coincidencias y retornamos las tres sugerencias más relevantes
+      // Ordenamos por el número de coincidencias y retornamos las cuatro sugerencias más relevantes
       estados.sort((a, b) => b.count - a.count);
 
-      // Limitar a las 3 sugerencias principales
-      const sugerencias = estados.slice(0, 3);
+      // Limitar a las 4 sugerencias principales
+      const sugerencias = estados.slice(0, 4);
 
       // Asignamos colores a las sugerencias
       return sugerencias.map((sug, index) => ({
         estado: sug.estado,
-        color: index === 0 ? "green" : index === 1 ? "orange" : "yellow"
+        color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray"
       }));
     }
 
