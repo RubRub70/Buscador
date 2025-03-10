@@ -46,10 +46,10 @@ fetch('placas.json')
         if (sugerencias.length > 0) {
           detailsContainer.innerHTML = `
             <strong>Posibles estados:</strong><br>
-            1. <span style="color: ${sugerencias[0].color};">${sugerencias[0].estado}</span><br>
-            2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado}</span><br>
-            3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado}</span><br>
-            4. <span style="color: ${sugerencias[3].color};">${sugerencias[3].estado}</span>
+            1. <span style="color: ${sugerencias[0].color};">${sugerencias[0].estado} (${sugerencias[0].label})</span><br>
+            2. <span style="color: ${sugerencias[1].color};">${sugerencias[1].estado} (${sugerencias[1].label})</span><br>
+            3. <span style="color: ${sugerencias[2].color};">${sugerencias[2].estado} (${sugerencias[2].label})</span><br>
+            4. <span style="color: ${sugerencias[3].color};">${sugerencias[3].estado} (${sugerencias[3].label})</span>
           `;
         } else {
           detailsContainer.innerHTML = "No se pudieron encontrar sugerencias para la placa.";
@@ -77,7 +77,8 @@ fetch('placas.json')
 
         return sugerenciasAleatorias.map((estado, index) => ({
           estado,
-          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray"
+          color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray",
+          label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada"
         }));
       }
 
@@ -99,10 +100,11 @@ fetch('placas.json')
       // Limitar a las 4 sugerencias principales
       const sugerencias = estados.slice(0, 4);
 
-      // Asignamos colores a las sugerencias
+      // Asignamos colores y etiquetas a las sugerencias
       return sugerencias.map((sug, index) => ({
         estado: sug.estado,
-        color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray"
+        color: index === 0 ? "green" : index === 1 ? "orange" : "red",
+        label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada"
       }));
     }
 
