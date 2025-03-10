@@ -50,17 +50,15 @@ fetch('placas.json')
 
     // Función para sugerir estados según los primeros 7 caracteres de la placa
     function sugerirEstados(placaInput, placas) {
-      // Tomamos los primeros 7 caracteres de la placa como referencia para buscar coincidencias
-      const prefijo = placaInput.substring(0, 7); // Lee los primeros 7 caracteres
+      const prefijo = placaInput.substring(0, 7); // Tomamos los primeros 7 caracteres de la placa como referencia para las sugerencias
 
-      // Filtramos las placas que comienzan con los mismos primeros 7 caracteres
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 7) === prefijo);
+      // Filtramos las placas que contienen los primeros caracteres de la placa ingresada (no exactos, pero similares)
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 7).includes(prefijo));
 
-      // Si no hay coincidencias exactas, hacemos una búsqueda general para todos los estados
       if (coincidencias.length === 0) {
-        // Si no hay coincidencias, sugerimos tres estados al azar basados en la base de datos
+        // Si no hay coincidencias, sugerimos tres estados más comunes basados en las primeras letras
         const estadosUnicos = [...new Set(placas.map(placa => placa['N. LETRAS']))];
-        
+
         // Seleccionamos tres estados aleatorios
         const sugerenciasAleatorias = [];
         while (sugerenciasAleatorias.length < 3 && estadosUnicos.length > 0) {
@@ -74,25 +72,25 @@ fetch('placas.json')
         }));
       }
 
-      // Contar las ocurrencias de los estados en las coincidencias
+      // Si encontramos coincidencias, calculamos la frecuencia de los estados
       const estadosCount = coincidencias.reduce((acc, placa) => {
         acc[placa['N. LETRAS']] = (acc[placa['N. LETRAS']] || 0) + 1;
         return acc;
       }, {});
 
-      // Convertir el objeto de conteo en un array de objetos con el estado y el número de coincidencias
+      // Convertimos el objeto de conteo en un array
       const estados = Object.keys(estadosCount).map(estado => ({
         estado,
         count: estadosCount[estado]
       }));
 
-      // Ordenar los estados por el número de coincidencias (de mayor a menor)
+      // Ordenamos por el número de coincidencias y retornamos las tres sugerencias más relevantes
       estados.sort((a, b) => b.count - a.count);
 
-      // Limitar las sugerencias a los tres estados más comunes
+      // Limitar a las 3 sugerencias principales
       const sugerencias = estados.slice(0, 3);
 
-      // Si hay sugerencias, destacamos el estado más común en verde, el segundo en naranja y el tercero en amarillo
+      // Asignamos colores a las sugerencias
       return sugerencias.map((sug, index) => ({
         estado: sug.estado,
         color: index === 0 ? "green" : index === 1 ? "orange" : "yellow"
