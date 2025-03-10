@@ -4,7 +4,7 @@ fetch('placas.json')
   .then(placas => {
     // Función de búsqueda
     function buscarPlaca() {
-      const placaInput = document.getElementById('placa-input').value.trim().toUpperCase();
+      const placaInput = document.getElementById('placa-input').value.trim().toUpperCase(); // Convertimos a mayúsculas
       const resultMessage = document.getElementById('result-message');
       const detailsContainer = document.getElementById('details');
 
@@ -57,12 +57,12 @@ fetch('placas.json')
       }
     }
 
-    // Función para sugerir estados según los primeros 4 caracteres de la placa
+    // Función para sugerir estados según las primeras 2 letras de la placa
     function sugerirEstados(placaInput, placas) {
-      const prefijo = placaInput.substring(0, 4); // Solo tomamos los primeros 4 caracteres de la placa
+      const prefijo = placaInput.substring(0, 2); // Solo tomamos los primeros 2 caracteres de la placa
 
-      // Filtramos las placas que contienen los primeros 4 caracteres de la placa ingresada
-      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 4).includes(prefijo));
+      // Filtramos las placas que contienen los primeros 2 caracteres de la placa ingresada
+      const coincidencias = placas.filter(placa => placa.Placa && placa.Placa.substring(0, 2).includes(prefijo));
 
       if (coincidencias.length === 0) {
         // Si no hay coincidencias, sugerimos cuatro estados más comunes basados en las primeras letras
@@ -78,7 +78,7 @@ fetch('placas.json')
         return sugerenciasAleatorias.map((estado, index) => ({
           estado,
           color: index === 0 ? "green" : index === 1 ? "orange" : index === 2 ? "yellow" : "gray",
-          label: index === 0 ? "Mayor coincidencia" : index === 1 ? "80% de coincidencia" : "Puedes intentarlo, pero no te aseguro nada"
+          label: index === 0 ? "Mayor coincidencia" : index === 1 ? "Coincidencia Promedio" : "Puedes intentarlo, pero no te aseguro nada"
         }));
       }
 
